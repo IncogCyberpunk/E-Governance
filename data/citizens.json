@@ -1,19 +1,5 @@
 [
   {
-    "nid_number": "104-332-181-9",
-    "full_name": "Allen Robinson",
-    "citizenship_number": "89-08-38-63794",
-    "date_of_birth": "1994-02-02",
-    "sex": "Female",
-    "blood_group": "A+",
-    "father_name": "Robert Wolfe",
-    "mother_name": "Brittney Bernard",
-    "address": "Ward No.9-Shivaraj Kapilvastu, Nepal",
-    "phone": "+977 9751161559",
-    "email": "lindsay78@example.org",
-    "created_at": "2025-11-04T17:21:13.383478+00:00"
-  },
-  {
     "nid_number": "618-495-931-0",
     "full_name": "Patricia Galloway",
     "citizenship_number": "31-64-75-25534",

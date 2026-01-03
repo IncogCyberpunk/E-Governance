@@ -19,7 +19,7 @@ function GovDashboard({ user, onLogout }) {
   const [healthInstitutes, setHealthInstitutes] = useState([]);
   const [healthRecords, setHealthRecords] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterOwnership, setFilterOwnership] = useState('all');
@@ -53,7 +53,7 @@ function GovDashboard({ user, onLogout }) {
 
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#f97316', '#84cc16'];
 
-const DashboardView = () => {
+  const DashboardView = () => {
     // KPI Stats
     const totalCitizens = citizens.length;
     const totalInstitutes = healthInstitutes.length;
@@ -260,9 +260,8 @@ const DashboardView = () => {
               {topDiagnosesPreview.map((diagnosis, idx) => (
                 <div key={diagnosis.name} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-white ${
-                      idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-gray-400' : idx === 2 ? 'bg-orange-600' : 'bg-gray-300'
-                    }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-white ${idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-gray-400' : idx === 2 ? 'bg-orange-600' : 'bg-gray-300'
+                      }`}>
                       {idx + 1}
                     </div>
                     <span className="text-sm text-gray-700 dark:text-gray-300">{diagnosis.name}</span>
@@ -508,7 +507,7 @@ const DashboardView = () => {
                     </div>
                   </div>
                   <div className="w-16 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-red-500"
                       style={{ width: `${stat.percentage}%` }}
                     ></div>
@@ -577,14 +576,14 @@ const DashboardView = () => {
 
     // Filter and search logic
     const filteredInstitutes = healthInstitutes.filter(institute => {
-      const matchesSearch = searchQuery === '' || 
+      const matchesSearch = searchQuery === '' ||
         institute.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         institute.license_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
         institute.address.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       const matchesType = filterType === 'all' || institute.type === filterType;
       const matchesOwnership = filterOwnership === 'all' || institute.ownership === filterOwnership;
-      const matchesStatus = filterStatus === 'all' || 
+      const matchesStatus = filterStatus === 'all' ||
         (filterStatus === 'active' && institute.is_active) ||
         (filterStatus === 'inactive' && !institute.is_active);
 
@@ -602,21 +601,19 @@ const DashboardView = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400">{type.name}</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{type.value}</p>
                 </div>
-                <div className={`p-3 rounded-lg ${
-                  idx === 0 ? 'bg-indigo-100 dark:bg-indigo-900/30' :
-                  idx === 1 ? 'bg-purple-100 dark:bg-purple-900/30' :
-                  'bg-pink-100 dark:bg-pink-900/30'
-                }`}>
-                  <Hospital className={`w-8 h-8 ${
-                    idx === 0 ? 'text-indigo-600 dark:text-indigo-400' :
-                    idx === 1 ? 'text-purple-600 dark:text-purple-400' :
-                    'text-pink-600 dark:text-pink-400'
-                  }`} />
+                <div className={`p-3 rounded-lg ${idx === 0 ? 'bg-indigo-100 dark:bg-indigo-900/30' :
+                    idx === 1 ? 'bg-purple-100 dark:bg-purple-900/30' :
+                      'bg-pink-100 dark:bg-pink-900/30'
+                  }`}>
+                  <Hospital className={`w-8 h-8 ${idx === 0 ? 'text-indigo-600 dark:text-indigo-400' :
+                      idx === 1 ? 'text-purple-600 dark:text-purple-400' :
+                        'text-pink-600 dark:text-pink-400'
+                    }`} />
                 </div>
               </div>
             </div>
           ))}
-          
+
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -700,13 +697,13 @@ const DashboardView = () => {
               <BarChart data={instituteCapacity} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
                 <XAxis type="number" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-                <YAxis 
-  dataKey="name" 
-  type="category" 
-  width={150} 
-  stroke={isDarkMode ? '#9ca3af' : '#6b7280'}
-  tick={{ fontSize: 11 }}
-/>
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  width={150}
+                  stroke={isDarkMode ? '#9ca3af' : '#6b7280'}
+                  tick={{ fontSize: 11 }}
+                />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
@@ -813,11 +810,10 @@ const DashboardView = () => {
                 <div key={institute.institute_id} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-indigo-500 dark:hover:border-indigo-400 transition">
                   <div className="flex items-start justify-between mb-2">
                     <h4 className="font-semibold text-gray-900 dark:text-white text-sm">{institute.name}</h4>
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                      institute.is_active
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${institute.is_active
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                         : 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-300'
-                    }`}>
+                      }`}>
                       {institute.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
@@ -864,7 +860,7 @@ const DashboardView = () => {
 
 
 
-const HealthInsightsView = () => {
+  const HealthInsightsView = () => {
     // Top 10 diagnoses
     const diagnosisData = healthRecords.reduce((acc, record) => {
       acc[record.diagnosis] = (acc[record.diagnosis] || 0) + 1;
@@ -883,35 +879,35 @@ const HealthInsightsView = () => {
     const recordTypeChartData = Object.entries(recordTypeData).map(([name, value]) => ({ name, value }));
 
     // District-wise health burden analysis
-const districtHealthData = {};
-healthRecords.forEach(record => {
-  const citizen = citizens.find(c => c.nid_number === record.nid_number);
-  if (citizen) {
-    const district = citizen.address.split(' ').slice(-2, -1)[0];
-    if (!districtHealthData[district]) {
-      districtHealthData[district] = { district, cases: 0, citizens: 0 };
-    }
-    districtHealthData[district].cases++;
-  }
-});
+    const districtHealthData = {};
+    healthRecords.forEach(record => {
+      const citizen = citizens.find(c => c.nid_number === record.nid_number);
+      if (citizen) {
+        const district = citizen.address.split(' ').slice(-2, -1)[0];
+        if (!districtHealthData[district]) {
+          districtHealthData[district] = { district, cases: 0, citizens: 0 };
+        }
+        districtHealthData[district].cases++;
+      }
+    });
 
-// Count citizens per district
-citizens.forEach(citizen => {
-  const district = citizen.address.split(' ').slice(-2, -1)[0];
-  if (districtHealthData[district]) {
-    districtHealthData[district].citizens++;
-  }
-});
+    // Count citizens per district
+    citizens.forEach(citizen => {
+      const district = citizen.address.split(' ').slice(-2, -1)[0];
+      if (districtHealthData[district]) {
+        districtHealthData[district].citizens++;
+      }
+    });
 
-const districtHealthBurden = Object.values(districtHealthData)
-  .map(d => ({
-    district: d.district,
-    cases: d.cases,
-    rate: ((d.cases / d.citizens) * 100).toFixed(1),
-    citizens: d.citizens
-  }))
-  .sort((a, b) => b.rate - a.rate)
-  .slice(0, 10);
+    const districtHealthBurden = Object.values(districtHealthData)
+      .map(d => ({
+        district: d.district,
+        cases: d.cases,
+        rate: ((d.cases / d.citizens) * 100).toFixed(1),
+        citizens: d.citizens
+      }))
+      .sort((a, b) => b.rate - a.rate)
+      .slice(0, 10);
 
     // Seasonal trends - diagnoses by month
     const monthlyDiagnoses = {};
@@ -1065,11 +1061,10 @@ const districtHealthBurden = Object.values(districtHealthData)
             {outbreakAlerts.map((alert, idx) => (
               <div key={alert.diagnosis} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-orange-200 dark:border-orange-700">
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`text-xs font-bold px-2 py-1 rounded ${
-                    idx === 0 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' :
-                    idx === 1 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' :
-                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                  }`}>
+                  <span className={`text-xs font-bold px-2 py-1 rounded ${idx === 0 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' :
+                      idx === 1 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' :
+                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                    }`}>
                     #{idx + 1}
                   </span>
                   <span className="text-lg font-bold text-gray-900 dark:text-white">{alert.count}</span>
@@ -1089,10 +1084,10 @@ const districtHealthBurden = Object.values(districtHealthData)
               <BarChart data={topDiagnoses} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
                 <XAxis type="number" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-                <YAxis 
-                  dataKey="name" 
-                  type="category" 
-                  width={120} 
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  width={120}
                   stroke={isDarkMode ? '#9ca3af' : '#6b7280'}
                   tick={{ fontSize: 11 }}
                 />
@@ -1109,43 +1104,43 @@ const districtHealthBurden = Object.values(districtHealthData)
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">District Health Burden (Cases per 100 Citizens)</h3>
-  <ResponsiveContainer width="100%" height={350}>
-    <BarChart data={districtHealthBurden} layout="vertical">
-      <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
-      <XAxis type="number" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-      <YAxis 
-        dataKey="district" 
-        type="category" 
-        width={100} 
-        stroke={isDarkMode ? '#9ca3af' : '#6b7280'}
-        tick={{ fontSize: 11 }}
-      />
-      <Tooltip
-        contentStyle={{
-          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
-          border: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
-          borderRadius: '0.5rem'
-        }}
-        content={({ active, payload }) => {
-          if (active && payload && payload.length) {
-            return (
-              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{payload[0].payload.district}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Health Cases: {payload[0].payload.cases}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Citizens: {payload[0].payload.citizens}</p>
-                <p className="text-xs font-medium text-red-600 dark:text-red-400">Rate: {payload[0].value}%</p>
-              </div>
-            );
-          }
-          return null;
-        }}
-      />
-      <Bar dataKey="rate" fill="#10b981" name="Health Burden Rate (%)" />
-    </BarChart>
-  </ResponsiveContainer>
-  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Districts with higher rates may need additional healthcare resources</p>
-</div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">District Health Burden (Cases per 100 Citizens)</h3>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={districtHealthBurden} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
+                <XAxis type="number" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
+                <YAxis
+                  dataKey="district"
+                  type="category"
+                  width={100}
+                  stroke={isDarkMode ? '#9ca3af' : '#6b7280'}
+                  tick={{ fontSize: 11 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                    border: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
+                    borderRadius: '0.5rem'
+                  }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{payload[0].payload.district}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Health Cases: {payload[0].payload.cases}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Citizens: {payload[0].payload.citizens}</p>
+                          <p className="text-xs font-medium text-red-600 dark:text-red-400">Rate: {payload[0].value}%</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar dataKey="rate" fill="#10b981" name="Health Burden Rate (%)" />
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Districts with higher rates may need additional healthcare resources</p>
+          </div>
         </div>
 
         {/* Seasonal Trends */}
@@ -1166,11 +1161,11 @@ const districtHealthBurden = Object.values(districtHealthData)
               />
               <Legend />
               {top5Diagnoses.map((diagnosis, idx) => (
-                <Line 
+                <Line
                   key={diagnosis}
-                  type="monotone" 
-                  dataKey={diagnosis} 
-                  stroke={COLORS[idx % COLORS.length]} 
+                  type="monotone"
+                  dataKey={diagnosis}
+                  stroke={COLORS[idx % COLORS.length]}
                   strokeWidth={2}
                   dot={{ fill: COLORS[idx % COLORS.length] }}
                 />
@@ -1187,10 +1182,10 @@ const districtHealthBurden = Object.values(districtHealthData)
               <BarChart data={treatmentPatternsData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
                 <XAxis type="number" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-                <YAxis 
-                  dataKey="diagnosis" 
-                  type="category" 
-                  width={100} 
+                <YAxis
+                  dataKey="diagnosis"
+                  type="category"
+                  width={100}
                   stroke={isDarkMode ? '#9ca3af' : '#6b7280'}
                   tick={{ fontSize: 11 }}
                 />
@@ -1379,8 +1374,8 @@ const districtHealthBurden = Object.values(districtHealthData)
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${activeTab === 'dashboard'
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-indigo-600 text-white'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               <BarChart3 className="w-5 h-5" />
@@ -1389,8 +1384,8 @@ const districtHealthBurden = Object.values(districtHealthData)
             <button
               onClick={() => setActiveTab('citizens')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${activeTab === 'citizens'
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-indigo-600 text-white'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               <Users className="w-5 h-5" />
@@ -1399,8 +1394,8 @@ const districtHealthBurden = Object.values(districtHealthData)
             <button
               onClick={() => setActiveTab('hospitals')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${activeTab === 'hospitals'
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-indigo-600 text-white'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               <Hospital className="w-5 h-5" />
@@ -1409,8 +1404,8 @@ const districtHealthBurden = Object.values(districtHealthData)
             <button
               onClick={() => setActiveTab('insights')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${activeTab === 'insights'
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-indigo-600 text-white'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               <TrendingUp className="w-5 h-5" />
