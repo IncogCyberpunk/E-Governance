@@ -1,0 +1,7 @@
+[build]
+  # We chain the installation, the pull script, and the build command, the venv is created automatically by Netlify and sourced automatically
+  command = "pip install -r scripts/requirements.txt && python3 scripts/pull.py && bun run build"
+  publish = "dist"
+
+[build.environment]
+  PYTHON_VERSION = "3.14.2"
