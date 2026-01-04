@@ -96,8 +96,23 @@ record_id = 1
 institute_ids = [i["institute_id"] for i in health_institutes]
 record_types = ["clinical_note", "lab_report", "imaging_report", "prescription", "discharge_summary"]
 
+diagnosis_list = ["No Significant Health Issue", "Hypertension", "Type 2 Diabetes", "High Cholesterol", "Obesity", "Upper Respiratory Infection", "Seasonal Allergies", "Asthma", "Sinusitis", "Gastroenteritis", "Anemia", "Arthritis", "Chronic Back Pain", "Depression", "Migraine", "Undifferentiated Fever"]
+diagnoses_record = {
+    diagnosis: [] for diagnosis in diagnosis_list
+}
+def add_diagnosis_record(diagnosis_, age_, sex_, province_, visit_date_):
+    diagnoses_record[diagnosis_].append({
+        "age": age_,                    
+        "sex": sex_,                    
+        "province": province_,    
+        "year": visit_date_.year,
+        "month": visit_date_.month
+    })
+
+
+
 for nid in citizen_nids:
-    for _ in range(random.randint(3, 8)):
+    for _ in range(random.randint(3, 10)):
 
         institute_id = random.choice(institute_ids)
         province = institute_provinces[institute_id - 1]
@@ -126,6 +141,14 @@ for nid in citizen_nids:
             "prescription": generate_prescription(diagnosis),
             "issued_date": date.isoformat()
         })
+
+        add_diagnosis_record(
+            diagnosis_=diagnosis,
+            age_=age,
+            sex_=sex,
+            province_=province,
+            visit_date_= date
+        )
         record_id += 1
 
 
@@ -186,3 +209,4 @@ write_json("data/citizens.json", citizens)
 write_json("data/health_institutes.json", health_institutes)
 write_json("data/health_records.json", health_records)
 write_json("data/entitlements.json", entitlements)
+write_json("data/diagnoses_record.json", diagnoses_record)
