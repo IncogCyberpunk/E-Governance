@@ -87,6 +87,7 @@ bun run dev
 - **Performance**: Optimized with Vite for fast development and builds
 - **Responsive**: Mobile-first design approach
 - **Dark Mode**: System preference detection with manual override
+- **Notifications Support**: Notification support for various operations
 
 ## 📁 Project Structure
 
