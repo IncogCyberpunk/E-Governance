@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Moon, Sun } from 'lucide-react';
 import { useDarkMode } from '../contexts/DarkModeContext';
+import { useCopyToClipboard } from '../utils/copyToClipboard';
 
 const mockGovUser = {
   id: 'gov-001',
@@ -27,6 +28,8 @@ function GovLogin({ onLogin }) {
       setLoading(false);
     }, 1000);
   };
+
+  const copyToClipboard = useCopyToClipboard();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-indigo-900 flex items-center justify-center p-4">
@@ -78,7 +81,22 @@ function GovLogin({ onLogin }) {
                 placeholder="Enter your password"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition dark:bg-gray-700 dark:text-white"
               />
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Demo: admin@mohp.gov.np / admin123</p>
+              <div className="flex flex-col items-center justify-center mt-6 p-2 bg-gray-800 dark:bg-gray-900 border-2 border-gray-700 rounded-3xl shadow-lg space-y-1 max-w-sm mx-auto">
+                <p className="text-2xl font-bold text-white">Demo</p>
+                <p className="flex justify-center text-lg text-gray-200" onClick={() => copyToClipboard('admin@mohp.gov.np', 'Email')}>
+                  Email:{" "}
+                  <span className="ml-2 cursor-pointer text-blue-400 hover:underline">
+                    admin@mohp.gov.np
+                  </span>
+                </p>
+
+                <p className="flex justify-center text-lg text-gray-200" onClick={() => copyToClipboard('admin@mohp.gov.np', 'Password')}>
+                  Password:{" "}
+                  <span className="ml-2 cursor-pointer text-blue-400 hover:underline">
+                    admin123
+                  </span>
+                </p>
+              </div>
             </div>
 
             <button

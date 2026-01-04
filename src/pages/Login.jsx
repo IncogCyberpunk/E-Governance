@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Shield, Moon, Sun, Loader, AlertCircle } from 'lucide-react';
 import { useDarkMode } from '../contexts/DarkModeContext';
 import { createClient } from '@supabase/supabase-js';
+import { useCopyToClipboard } from '../utils/copyToClipboard';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -67,6 +68,8 @@ function Login({ onLogin, onBack }) {
     }
   };
 
+  const copyToClipbaord = useCopyToClipboard();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
@@ -121,8 +124,8 @@ function Login({ onLogin, onBack }) {
               disabled={loading}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition dark:bg-gray-700 dark:text-white disabled:opacity-50"
             />
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Demo NID: <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400">005-991-542-3</span>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400" onClick={() => copyToClipbaord('014-410-716-6', 'Demo NID')}>
+              Demo NID: <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">014-410-716-6</span>
             </p>
           </div>
 
