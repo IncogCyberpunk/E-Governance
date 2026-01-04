@@ -2,12 +2,12 @@ import pandas as pd
 
 district_to_province = {
     "Taplejung": "Koshi",
-    "Panchthar": "Koshi",
     "Ilam": "Koshi",
     "Jhapa": "Koshi",
     "Tehrathum": "Koshi",
     "Sankhuwasabha": "Koshi",
     "Dhankuta": "Koshi",
+    "Panchthar": "Koshi",
     "Morang": "Koshi",
     "Sunsari": "Koshi",
     "Bhojpur": "Koshi",
@@ -50,6 +50,7 @@ district_to_province = {
     "Parasi": "Lumbini",
     "Palpa": "Lumbini",
     "Gulmi": "Lumbini",
+    "Nawalparasi West": "Lumbini",
     "Arghakhanchi": "Lumbini",
     "Rupandehi": "Lumbini",
     "Kapilvastu": "Lumbini",

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Hospital, Moon, Sun, Lock, AlertCircle } from 'lucide-react';
+import { useCopyToClipboard } from '../utils/copyToClipboard';
 // import { useDarkMode } from '../contexts/DarkModeContext';
 
 // Hardcoded institute for MVP
@@ -40,6 +41,8 @@ function HospitalLogin({ onLogin, onBack }) {
       handleLogin();
     }
   };
+
+  const copyToClipboard = useCopyToClipboard();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
@@ -123,15 +126,17 @@ function HospitalLogin({ onLogin, onBack }) {
           </div>
 
           <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-            <p className="text-s text-gray-600 dark:text-gray-400 text-center font-bold mb-2">
+            <p className="text-lg text-gray-600 dark:text-gray-400 text-center font-bold mb-2">
               Demo Credentials
             </p>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-500 text-center">
-                License: <span className="font-mono text-teal-600 dark:text-teal-400">MED-16822608</span>
+              <p className="text-md text-gray-500 dark:text-gray-500 text-center"
+                onClick={() => copyToClipboard('MED-16822608', 'License No.')}>
+                License: <span className="font-mono text-teal-600 dark:text-teal-400 hover:underline">MED-16822608</span>
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-500 text-center">
-                Password: <span className="font-mono text-teal-600 dark:text-teal-400">password</span>
+              <p className="text-md text-gray-500 dark:text-gray-500 text-center"
+                onClick={() => copyToClipboard('password', 'Password')}>
+                Password: <span className="font-mono text-teal-600 dark:text-teal-400 hover:underline">password</span>
               </p>
             </div>
           </div>
