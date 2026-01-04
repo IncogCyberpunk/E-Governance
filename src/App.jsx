@@ -32,9 +32,9 @@ function PortalSelection() {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-3xl blur-xl opacity-50"></div>
             <div className="relative bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-2xl ring-4 ring-white dark:ring-gray-700">
-              <img 
-                src="./logo_.png" 
-                alt="E-Governance Nepal Logo" 
+              <img
+                src="/logo.png"
+                alt="E-Governance Nepal Logo"
                 className="w-50 h-50 object-contain"
               />
             </div>
