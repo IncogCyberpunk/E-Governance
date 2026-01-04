@@ -24,6 +24,9 @@ citizens = []
 citizen_nids = []
 citizens_ages = []
 citizens_sex = []
+citizen_issued_dates = []
+citizen_dob = []
+start_year = 9999
 
 for _ in range(NUM_CITIZEN):
 
@@ -34,8 +37,14 @@ for _ in range(NUM_CITIZEN):
     today = date.today()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
+    start_date = dob + timedelta(days=6570) 
+    issued_date = fake.date_between(start_date=start_date, end_date="today")  # after 18 years
+    start_year = min(start_year, issued_date.year)
+
     citizens_sex.append(sex)
     citizens_ages.append(age)
+    citizen_issued_dates.append(issued_date)
+    citizen_dob.append(dob)
 
     citizens.append({
         "nid_number": nid,
@@ -49,7 +58,7 @@ for _ in range(NUM_CITIZEN):
         "address": generate_address(location_data),
         "phone": fake.unique.numerify(random.choice(["+977 98########", "+977 97########"])),
         "email": fake.email(),
-        "created_at": fake.date_time_this_decade().isoformat()
+        "created_at": issued_date.isoformat()
     })
 
 
@@ -58,11 +67,15 @@ for _ in range(NUM_CITIZEN):
 NUM_INSTITUTES = len(institutes_json)
 health_institutes = []
 institute_provinces = []
+institute_established_dates = []
 
 for i in range(1, NUM_INSTITUTES + 1):
     institute_type = random.choice(["hospital", "clinic", "health_post"])
     province = institutes_json.iloc[i % len(institutes_json)]["province"]
     institute_provinces.append(province)
+    established_date = fake.date_between(start_date="-30y", end_date="-5y")
+    institute_established_dates.append(established_date)
+
     health_institutes.append({
         "institute_id": i,
         "name": institutes_json.iloc[i % len(institutes_json)]["name"],
@@ -71,7 +84,7 @@ for i in range(1, NUM_INSTITUTES + 1):
         "address": generate_address(location_data_by_province[province]),
         "phone": fake.unique.numerify("01-#######"),
         "is_active": True,
-        "created_at": fake.date_time_this_decade().isoformat(),
+        "created_at": established_date.isoformat(),
         "license_number": fake.unique.numerify(random.choice(["LIC-########", "HLT-########", "MED-########"]))
     })
 
@@ -83,19 +96,39 @@ record_id = 1
 institute_ids = [i["institute_id"] for i in health_institutes]
 record_types = ["clinical_note", "lab_report", "imaging_report", "prescription", "discharge_summary"]
 
-for nid in citizen_nids:
-    for _ in range(random.randint(1, 8)):
+diagnosis_list = ["No Significant Health Issue", "Hypertension", "Type 2 Diabetes", "High Cholesterol", "Obesity", "Upper Respiratory Infection", "Seasonal Allergies", "Asthma", "Sinusitis", "Gastroenteritis", "Anemia", "Arthritis", "Chronic Back Pain", "Depression", "Migraine", "Undifferentiated Fever"]
+diagnoses_record = {
+    diagnosis: [] for diagnosis in diagnosis_list
+}
+def add_diagnosis_record(diagnosis_, age_, sex_, province_, visit_date_):
+    diagnoses_record[diagnosis_].append({
+        "age": age_,                    
+        "sex": sex_,                    
+        "province": province_,    
+        "year": visit_date_.year,
+        "month": visit_date_.month
+    })
 
-        date = fake.date_between(start_date="-15y", end_date="today")
+
+
+for nid in citizen_nids:
+    for _ in range(random.randint(3, 10)):
+
         institute_id = random.choice(institute_ids)
         province = institute_provinces[institute_id - 1]
-        age = citizens_ages[citizen_nids.index(nid)]
         sex = citizens_sex[citizen_nids.index(nid)]
+        issued_date = citizen_issued_dates[citizen_nids.index(nid)]
+        established_date = institute_established_dates[institute_id - 1]
+        start_date = max(issued_date, established_date)
+        date = fake.date_between(start_date=start_date, end_date="today")
+        age = date.year - citizen_dob[citizen_nids.index(nid)].year - ((date.month, date.day) < (citizen_dob[citizen_nids.index(nid)].month, citizen_dob[citizen_nids.index(nid)].day))
+
         diagnosis = generate_diagnosis(
             age=age,
             sex=sex,
             visit_date=date,
             province=province,
+            start_year=start_year
         )
         health_records.append({
             "record_id": record_id,
@@ -106,8 +139,16 @@ for nid in citizen_nids:
             "description": generate_description(diagnosis),
             "diagnosis": diagnosis,
             "prescription": generate_prescription(diagnosis),
-            "issued_date": fake.date_between(start_date="-10y", end_date="today").isoformat()
+            "issued_date": date.isoformat()
         })
+
+        add_diagnosis_record(
+            diagnosis_=diagnosis,
+            age_=age,
+            sex_=sex,
+            province_=province,
+            visit_date_= date
+        )
         record_id += 1
 
 
@@ -168,3 +209,4 @@ write_json("data/citizens.json", citizens)
 write_json("data/health_institutes.json", health_institutes)
 write_json("data/health_records.json", health_records)
 write_json("data/entitlements.json", entitlements)
+write_json("data/diagnoses_record.json", diagnoses_record)
