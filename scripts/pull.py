@@ -19,36 +19,36 @@ response = supabase.table("citizens").select("*").execute()
 # print(response.data)
 
 
-os.makedirs("../../data", exist_ok=True)
+os.makedirs("data", exist_ok=True)
 
-with open(f"../../data/citizens.json", "w", encoding="utf-8") as f:
+with open(f"data/citizens.json", "w", encoding="utf-8") as f:
     json.dump(response.data, f, indent=2, ensure_ascii=False)
 
     
-# print("Data saved to ../../data/output.json")
+# print("Data saved to data/output.json")
 response = supabase.table("entitlements").select("*").execute()
 # print(response.data)
 
 
-os.makedirs("../../data", exist_ok=True)
+os.makedirs("data", exist_ok=True)
 
-with open(f"../../data/entitlements.json", "w", encoding="utf-8") as f:
+with open(f"data/entitlements.json", "w", encoding="utf-8") as f:
     json.dump(response.data, f, indent=2, ensure_ascii=False)
 
 response = supabase.table("health_institutes").select("*").execute()
 # print(response.data)
 
 
-os.makedirs("../../data", exist_ok=True)
+os.makedirs("data", exist_ok=True)
 
-with open(f"../../data/health_institutes.json", "w", encoding="utf-8") as f:
+with open(f"data/health_institutes.json", "w", encoding="utf-8") as f:
     json.dump(response.data, f, indent=2, ensure_ascii=False)
 
 response = supabase.table("health_records").select("*").execute()
 # print(response.data)
 
 
-os.makedirs("../../data", exist_ok=True)
+os.makedirs("data", exist_ok=True)
 
-with open(f"../../data/health_records.json", "w", encoding="utf-8") as f:
+with open(f"data/health_records.json", "w", encoding="utf-8") as f:
     json.dump(response.data, f, indent=2, ensure_ascii=False)
