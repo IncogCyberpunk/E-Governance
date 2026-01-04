@@ -116,7 +116,7 @@ function GovLogin({ onLogin }) {
           </div>
         </div>
 
-        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-6">
+        <p className="text-center text-2xl font-semibold text-gray-600 dark:text-gray-300 mt-6">
           Ministry of Health and Population, Nepal
         </p>
       </div>
