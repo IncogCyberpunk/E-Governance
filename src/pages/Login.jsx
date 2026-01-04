@@ -124,8 +124,8 @@ function Login({ onLogin, onBack }) {
               disabled={loading}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition dark:bg-gray-700 dark:text-white disabled:opacity-50"
             />
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400" onClick={() => copyToClipbaord('014-410-716-6', 'Demo NID')}>
-              Demo NID: <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">014-410-716-6</span>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400" onClick={() => copyToClipbaord('277-265-681-8', 'Demo NID')}>
+              Demo NID: <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">277-265-681-8</span>
             </p>
           </div>
 

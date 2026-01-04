@@ -5,6 +5,7 @@ import {
   Clock, Moon, Sun, Menu, CheckCircle, Download, Loader, UserPlus
 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { useCopyToClipboard } from '../utils/copyToClipboard';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -179,6 +180,8 @@ function HospitalDashboard({ user, onLogout, isDarkMode, toggleDarkMode }) {
     return colors[type] || 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
   };
 
+  const copyToClipboard = useCopyToClipboard();
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -278,10 +281,21 @@ function HospitalDashboard({ user, onLogout, isDarkMode, toggleDarkMode }) {
 
         {/* Patient Search */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-            <Search className="w-5 h-5 mr-2" />
-            Patient Lookup
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+              <Search className="w-5 h-5 mr-2" />
+              Patient Lookup
+            </h2>
+
+            <div className="flex space-x-2 px-4 py-2 rounded-2xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 shadow-sm" onClick={() => copyToClipboard('277-265-681-8', 'NID')}>
+              <span className="text-base font-semibold text-gray-500 dark:text-gray-400 block">
+                Demo NID
+              </span>
+              <span className="text-base font-semibold text-gray-900 dark:text-white hover:underline">
+                277-265-681-8
+              </span>
+            </div>
+          </div>
           <div className="flex gap-4">
             <div className="flex-1">
               <input
