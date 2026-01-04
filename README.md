@@ -51,13 +51,6 @@ bun run dev
 
 4. Open your browser and navigate to `http://localhost:5173`
 
-## 📱 Usage
-
-### Demo Login
-
-For demonstration purposes, use the following NID number:
-- **NID**: `1234567890`
-
 ### Navigation
 
 1. **Login Page**: Enter your NID number to access the system
