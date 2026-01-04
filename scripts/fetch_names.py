@@ -14,11 +14,11 @@ COUNT = 500
 OUTPUT_FILE = "data/names.json"
 
 data = {
-    "male": {
+    "Male": {
         "first_names": [],
         "last_names": []
     },
-    "female": {
+    "Female": {
         "first_names": [],
         "last_names": []
     }
