@@ -61,19 +61,54 @@ function GovDashboard({ user, onLogout }) {
 
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#f97316', '#84cc16'];
 
-  const DashboardView = () => {
+const DashboardView = () => {
     // KPI Stats
     const totalCitizens = citizens.length;
     const totalInstitutes = healthInstitutes.length;
     const totalRecords = healthRecords.length;
     const activeInstitutes = healthInstitutes.filter(h => h.is_active).length;
 
+    // Age demographics for healthcare planning
+    const calculateAge = (dob) => {
+      const birthDate = new Date(dob);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    };
+
+    const ageGroups = {
+      'Children (0-18)': 0,
+      'Young Adults (19-35)': 0,
+      'Middle Age (36-55)': 0,
+      'Senior (56-70)': 0,
+      'Elderly (71+)': 0
+    };
+
+    citizens.forEach(citizen => {
+      const age = calculateAge(citizen.date_of_birth);
+      if (age <= 18) ageGroups['Children (0-18)']++;
+      else if (age <= 35) ageGroups['Young Adults (19-35)']++;
+      else if (age <= 55) ageGroups['Middle Age (36-55)']++;
+      else if (age <= 70) ageGroups['Senior (56-70)']++;
+      else ageGroups['Elderly (71+)']++;
+    });
+
+    const ageDemographicsData = Object.entries(ageGroups).map(([name, value]) => ({ 
+      name, 
+      value,
+      percentage: ((value / citizens.length) * 100).toFixed(1)
+    }));
+
     // Calculate citizens per institute by district
     const districtStats = {};
     healthInstitutes.forEach(institute => {
       const district = institute.address.split(' ').slice(-2, -1)[0];
       if (!districtStats[district]) {
-        districtStats[district] = { institutes: 0, district };
+        districtStats[district] = { institutes: 0, district, citizens: 0 };
       }
       districtStats[district].institutes += 1;
     });
@@ -85,12 +120,28 @@ function GovDashboard({ user, onLogout }) {
       }
     });
 
+    // Healthcare need vs supply gap
     const resourceAllocation = Object.values(districtStats)
       .map(d => ({
         district: d.district,
-        ratio: d.citizens && d.institutes ? Math.round(d.citizens / d.institutes) : 0
+        ratio: d.citizens && d.institutes ? Math.round(d.citizens / d.institutes) : 0,
+        citizens: d.citizens,
+        institutes: d.institutes
       }))
+      .filter(d => d.citizens > 0)
       .sort((a, b) => b.ratio - a.ratio)
+      .slice(0, 10);
+
+    // Healthcare accessibility (institutes per 10k citizens)
+    const districtAccessibility = Object.values(districtStats)
+      .map(d => ({
+        district: d.district,
+        citizens: d.citizens || 0,
+        institutes: d.institutes || 0,
+        coverage: d.citizens && d.institutes ? ((d.institutes / d.citizens) * 10000).toFixed(1) : 0
+      }))
+      .filter(d => d.citizens > 0)
+      .sort((a, b) => parseFloat(b.coverage) - parseFloat(a.coverage))
       .slice(0, 10);
 
     // Records over time data
@@ -104,18 +155,6 @@ function GovDashboard({ user, onLogout }) {
       .sort((a, b) => new Date('20' + a[0].split(' ')[1] + '-' + a[0].split(' ')[0]) - new Date('20' + b[0].split(' ')[1] + '-' + b[0].split(' ')[0]))
       .slice(-12)
       .map(([month, records]) => ({ month, records }));
-
-    // IPD vs OPD trend
-    const recordTypeByMonth = healthRecords.reduce((acc, record) => {
-      const month = new Date(record.issued_date).toLocaleString('default', { month: 'short', year: '2-digit' });
-      if (!acc[month]) acc[month] = { month, IPD: 0, OPD: 0 };
-      acc[month][record.record_type] = (acc[month][record.record_type] || 0) + 1;
-      return acc;
-    }, {});
-
-    const typeTimeData = Object.values(recordTypeByMonth)
-      .sort((a, b) => new Date('20' + a.month.split(' ')[1] + '-' + a.month.split(' ')[0]) - new Date('20' + b.month.split(' ')[1] + '-' + b.month.split(' ')[0]))
-      .slice(-12);
 
     // Top 5 diagnoses for quick overview
     const diagnosisData = healthRecords.reduce((acc, record) => {
@@ -136,6 +175,22 @@ function GovDashboard({ user, onLogout }) {
         .map(r => r.nid_number)
     );
     const coverageRate = ((recentRecordNIDs.size / totalCitizens) * 100).toFixed(1);
+
+    // Institute type distribution for policy planning
+    const instituteTypeData = healthInstitutes.reduce((acc, institute) => {
+      const type = institute.type.charAt(0).toUpperCase() + institute.type.slice(1);
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {});
+    const instituteTypeChartData = Object.entries(instituteTypeData).map(([name, value]) => ({ name, value }));
+
+    // Ownership distribution
+    const ownershipData = healthInstitutes.reduce((acc, institute) => {
+      const ownership = institute.ownership.charAt(0).toUpperCase() + institute.ownership.slice(1);
+      acc[ownership] = (acc[ownership] || 0) + 1;
+      return acc;
+    }, {});
+    const ownershipChartData = Object.entries(ownershipData).map(([name, value]) => ({ name, value }));
 
     return (
       <div className="space-y-6">
@@ -192,38 +247,16 @@ function GovDashboard({ user, onLogout }) {
           </div>
         </div>
 
-        {/* Two column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* IPD vs OPD Trend */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Patient Type Trends</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={typeTimeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
-                <XAxis dataKey="month" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-                <YAxis stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
-                    border: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
-                    borderRadius: '0.5rem',
-                    color: isDarkMode ? '#f9fafb' : '#111827'
-                  }}
-                />
-                <Legend />
-                <Area type="monotone" dataKey="OPD" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} />
-                <Area type="monotone" dataKey="IPD" stackId="1" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.6} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
 
-          {/* Resource Allocation */}
+        {/* Resource Allocation and Accessibility */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Resource Gap Analysis */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resource Allocation (Citizens per Institute)</h3>
-            <ResponsiveContainer width="100%" height={300}>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Healthcare Need vs Supply (Citizens per Institute)</h3>
+            <ResponsiveContainer width="100%" height={350}>
               <BarChart data={resourceAllocation}>
                 <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
-                <XAxis dataKey="district" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
+                <XAxis dataKey="district" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} angle={-45} textAnchor="end" height={80} />
                 <YAxis stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
                 <Tooltip
                   contentStyle={{
@@ -231,20 +264,70 @@ function GovDashboard({ user, onLogout }) {
                     border: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
                     borderRadius: '0.5rem'
                   }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{payload[0].payload.district}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Citizens: {payload[0].payload.citizens.toLocaleString()}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Institutes: {payload[0].payload.institutes}</p>
+                          <p className="text-xs font-medium text-red-600 dark:text-red-400">Ratio: {payload[0].value}:1</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
                 />
-                <Bar dataKey="ratio" fill="#ec4899" />
+                <Bar dataKey="ratio" fill="#ef4444" />
               </BarChart>
             </ResponsiveContainer>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Higher ratio indicates need for more healthcare facilities</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">⚠️ Higher ratios indicate urgent need for more healthcare facilities</p>
+          </div>
+
+          {/* Healthcare Accessibility Index */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Healthcare Accessibility (Institutes per 10k Citizens)</h3>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={districtAccessibility}>
+                <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
+                <XAxis dataKey="district" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} angle={-45} textAnchor="end" height={80} />
+                <YAxis stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                    border: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
+                    borderRadius: '0.5rem'
+                  }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const benchmarkMet = parseFloat(payload[0].value) >= 5;
+                      return (
+                        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{payload[0].payload.district}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Citizens: {payload[0].payload.citizens.toLocaleString()}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Institutes: {payload[0].payload.institutes}</p>
+                          <p className={`text-xs font-medium ${benchmarkMet ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
+                            Coverage: {payload[0].value} per 10k {benchmarkMet ? '✓' : '⚠️'}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar dataKey="coverage" fill="#10b981" />
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">✓ Benchmark: 5-10 institutes per 10,000 citizens (WHO standard)</p>
           </div>
         </div>
 
         {/* Records Over Time and Top Diagnoses */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Health Records Over Time</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Health Records Trend (Last 12 Months)</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={recordsTimeData}>
+              <AreaChart data={recordsTimeData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
                 <XAxis dataKey="month" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
                 <YAxis stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
@@ -257,19 +340,23 @@ function GovDashboard({ user, onLogout }) {
                   }}
                 />
                 <Legend />
-                <Line type="monotone" dataKey="records" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1' }} />
-              </LineChart>
+                <Area type="monotone" dataKey="records" stroke="#6366f1" fill="#6366f1" fillOpacity={0.6} />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top 5 Diagnoses</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top 5 Health Conditions</h3>
             <div className="space-y-3">
               {topDiagnosesPreview.map((diagnosis, idx) => (
                 <div key={diagnosis.name} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-white ${idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-gray-400' : idx === 2 ? 'bg-orange-600' : 'bg-gray-300'
-                      }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-white ${
+                      idx === 0 ? 'bg-yellow-500' : 
+                      idx === 1 ? 'bg-gray-400' : 
+                      idx === 2 ? 'bg-orange-600' : 
+                      'bg-gray-300'
+                    }`}>
                       {idx + 1}
                     </div>
                     <span className="text-sm text-gray-700 dark:text-gray-300">{diagnosis.name}</span>
@@ -278,12 +365,78 @@ function GovDashboard({ user, onLogout }) {
                 </div>
               ))}
             </div>
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Total unique diagnoses tracked: {Object.keys(diagnosisData).length}</p>
+            </div>
           </div>
+
+          {/* Healthcare Infrastructure Overview */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Healthcare Infrastructure Distribution</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={instituteTypeChartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {instituteTypeChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                      border: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
+                      borderRadius: '0.5rem'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex flex-col justify-center space-y-4">
+              <div>
+                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mb-3">By Type:</p>
+                <div className="space-y-2">
+                  {instituteTypeChartData.map((item, idx) => (
+                    <div key={item.name} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
+                        <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
+                      </div>
+                      <span className="font-medium text-gray-900 dark:text-white">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mb-3">By Ownership:</p>
+                <div className="space-y-2">
+                  {ownershipChartData.map((item, idx) => (
+                    <div key={item.name} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
+                        <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
+                      </div>
+                      <span className="font-medium text-gray-900 dark:text-white">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     );
   };
-
   const CitizensView = () => {
     // Gender distribution
     const genderData = citizens.reduce((acc, citizen) => {
