@@ -90,7 +90,7 @@ function GovLogin({ onLogin }) {
                   </span>
                 </p>
 
-                <p className="flex justify-center text-lg text-gray-200" onClick={() => copyToClipboard('admin@mohp.gov.np', 'Password')}>
+                <p className="flex justify-center text-lg text-gray-200" onClick={() => copyToClipboard('admin123', 'Password')}>
                   Password:{" "}
                   <span className="ml-2 cursor-pointer text-blue-400 hover:underline">
                     admin123
