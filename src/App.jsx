@@ -18,7 +18,6 @@ function PortalSelection() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center flex-col p-4 relative overflow-hidden">
-      {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-30 dark:opacity-20 pointer-events-none">
         <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -90,8 +89,8 @@ function PortalSelection() {
             </button>
           </div>
 
-          {/* gov Portal Card - Commented out */}
-          {/* <div
+          {/* gov Portal Card */}
+          <div
             onClick={() => navigate('/gov')}
             className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-all transform hover:-translate-y-2 border border-gray-200/50 dark:border-gray-700/50 w-80 group"
           >
@@ -107,7 +106,7 @@ function PortalSelection() {
             <button className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
               Login as Administrator
             </button>
-          </div> */}
+          </div>
         </div>
       </div>
 
